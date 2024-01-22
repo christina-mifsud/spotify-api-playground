@@ -85,8 +85,9 @@ async function getPlaylist(access_token) {
   return await response.json();
 }
 // if we have a token, then run the getPlaylist function to get playlist info in the console.log
+// profile.tracks.items[0] gets us info about who added the first item for example
 getToken().then((response) => {
   getPlaylist(response.access_token).then((profile) => {
-    console.log(profile);
+    console.log(profile.tracks.items[0]);
   });
 });
