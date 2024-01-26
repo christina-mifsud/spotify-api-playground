@@ -149,9 +149,15 @@ app.get("/callback", function (req, res) {
 });
 
 //// /refresh_token route
+// in URL - http://localhost:8888/refresh_token?refresh_token=YOUR_REFRESH_TOKEN**
 // expects a refresh_token query parameter, sends a POST request to Spotify's token endpoint with the refresh token, and responds with the new access and refresh tokens
 app.get("/refresh_token", function (req, res) {
   var refresh_token = req.query.refresh_token;
+
+  if (!refresh_token) {
+    return res.status(400).send({ error: "refresh_token must be supplied" });
+  }
+
   var authOptions = {
     url: "https://accounts.spotify.com/api/token",
     headers: {
@@ -173,13 +179,18 @@ app.get("/refresh_token", function (req, res) {
 
       console.log("NEW REFRESH AND ACCESS TOKEN:");
       console.log(`NEW access token: ${body.access_token}`);
-      console.log(`NEW refresh token: ${body.refresh_token}`);
 
       res.send({
         access_token: body.access_token,
         refresh_token: body.refresh_token,
       });
+    } else {
+      console.error("Error in /refresh_token route:", error);
+      console.error("Response status code:", response.statusCode);
+      console.error("Response body:", body);
+      res
+        .status(response.statusCode)
+        .send({ error: "Failed to refresh token" });
     }
-    console.log("ACCESSING /REFRESH_TOKEN ENDPOINT");
   });
 });
