@@ -14,9 +14,13 @@ var cors = require("cors");
 var querystring = require("querystring");
 var cookieParser = require("cookie-parser");
 
-var client_id = ""; // CHANGE HERE
-var client_secret = ""; // CHANGE HERE
-var redirect_uri = "http://localhost:8888/callback";
+const path = require("path");
+require("dotenv").config({ path: path.join(__dirname, "../.env.local") });
+
+var client_id = process.env.CLIENT_ID;
+var client_secret = process.env.CLIENT_SECRET;
+var redirect_uri = process.env.REDIRECT_URI;
+console.log("CLIENT_ID from variable:", client_id);
 
 const generateRandomString = (length) => {
   return crypto.randomBytes(60).toString("hex").slice(0, length);
@@ -194,3 +198,5 @@ app.get("/refresh_token", function (req, res) {
     }
   });
 });
+
+// ** store in DB
