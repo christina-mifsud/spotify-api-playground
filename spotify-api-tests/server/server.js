@@ -202,7 +202,7 @@ app.get("/refresh_token", function (req, res) {
       }
 
       // now take the refresh token which is stored in DB and save THAT as the refresh token to be used in the next steps
-      var refresh_token = storedRefreshToken.refresh_token;
+      // var refresh_token = storedRefreshToken.refresh_token;
 
       var authOptions = {
         url: "https://accounts.spotify.com/api/token",
@@ -213,25 +213,26 @@ app.get("/refresh_token", function (req, res) {
         },
         form: {
           grant_type: "refresh_token",
-          refresh_token: refresh_token,
+          refresh_token: storedRefreshToken.refresh_token,
         },
         json: true,
       };
 
       request.post(authOptions, function (error, response, body) {
         if (!error && response.statusCode === 200) {
-          var access_token = body.access_token;
-          refresh_token = body.refresh_token;
+          var refresh_token = storedRefreshToken.refresh_token;
 
-          console.log("NEW ACCESS TOKEN:");
-          console.log(`NEW access token: ${body.access_token}`);
+          console.log(`NEW ACCESS TOKEN: ${body.access_token}`);
+          console.log(
+            `DB stored refresh token: ${storedRefreshToken.refresh_token}`
+          );
           console.log(
             "______________________________________________________________"
           );
 
           res.send({
             access_token: body.access_token,
-            refresh_token: body.refresh_token,
+            refresh_token: refresh_token,
           });
         } else {
           console.error("Error in /refresh_token route:", error);
@@ -245,6 +246,3 @@ app.get("/refresh_token", function (req, res) {
     }
   );
 });
-
-// everytime /login route is hit a new refresh and access token is generated & stored in the db
-// everytime /refresh_token is hit a new access token (only) is generated
