@@ -2,6 +2,9 @@ const express = require("express");
 const app = express();
 const port = 3000;
 
+const path = require("path");
+require("dotenv").config({ path: path.join(__dirname, "../.env.local") });
+
 // Display the Sign in with Slack button
 
 app.get("/sign-in", async (_, res) => {
